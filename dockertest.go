@@ -179,6 +179,7 @@ type RunOptions struct {
 	Auth         dc.AuthConfiguration
 	PortBindings map[dc.Port][]dc.PortBinding
 	Privileged   bool
+	User         string
 }
 
 // BuildAndRunWithOptions builds and starts a docker container.
@@ -222,6 +223,7 @@ func (d *Pool) RunWithOptions(opts *RunOptions, hcOpts ...func(*dc.HostConfig)) 
 	cmd := opts.Cmd
 	ep := opts.Entrypoint
 	wd := opts.WorkingDir
+	usr := opts.User
 	var exp map[dc.Port]struct{}
 
 	if len(opts.ExposedPorts) > 0 {
@@ -296,6 +298,7 @@ func (d *Pool) RunWithOptions(opts *RunOptions, hcOpts ...func(*dc.HostConfig)) 
 			WorkingDir:   wd,
 			Labels:       opts.Labels,
 			StopSignal:   "SIGWINCH", // to support timeouts
+			User:         usr,
 		},
 		HostConfig:       &hostConfig,
 		NetworkingConfig: &networkingConfig,
